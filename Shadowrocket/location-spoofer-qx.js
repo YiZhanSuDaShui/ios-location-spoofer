@@ -1,9 +1,6 @@
 /*
- * iOS Location Spoofer — Quantumult X 适配版
- *
- * QX 与 Surge/Shadowrocket 的区别：
- * - $response.body 是 base64 编码的字符串（二进制内容）
- * - $done({body: ...}) 需返回 base64 字符串
+ * QX 的 $response.body 给的是 base64 字符串（不是 Uint8Array），
+ * 所以这版多了一步 base64 ↔ bytes 的转换，其他逻辑和主版一样。
  */
 (function () {
   "use strict";

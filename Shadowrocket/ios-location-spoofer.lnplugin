@@ -1,5 +1,5 @@
 #!name=iOS Location Spoofer
-#!desc=通过 MITM HTTPS 解密拦截 Apple WiFi/蜂窝定位响应并修改坐标。Loon 插件版。
+#!desc=拦截 Apple 定位服务回传的坐标资料并置换为指定位置。Loon 专用。
 #!homepage=https://github.com/mekos2772/ios-location-spoofer
 
 [Script]

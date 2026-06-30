@@ -1,9 +1,10 @@
 /*
- * iOS Location Spoofer — MITM Apple Wi-Fi/cellular location response patcher.
+ * 拦截 Apple /clls/wloc 接口的回应，解 ARPC 封包，改 WiFi 热点和基站坐标，
+ * 再按 Apple 的格式封回去返回给系统。
  *
- * Intercepts Apple's /clls/wloc location request, decodes the ARPC wrapper,
- * patches AppleWLoc protobuf wifi device and cell tower locations, and
- * returns an Apple-style binary location response.
+ * 主要流程：
+ *   ARPC 拆包 → protobuf 解字段 → 替换 Location 子消息的坐标/精度/运动状态
+ *   → protobuf 重新打包 → 按原格式（ARPC / marker / synthetic）封回
  */
 (function () {
   "use strict";

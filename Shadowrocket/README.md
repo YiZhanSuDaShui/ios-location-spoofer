@@ -1,120 +1,92 @@
-# iOS Location Spoofer — 多平台定位欺骗模块
+# iOS Location Spoofer
 
-通过 HTTPS 解密（MITM）拦截 Apple 定位服务响应，修改 GPS 坐标，欺骗 iOS 系统定位。
+用代理软件的 HTTPS 解密功能，把 Apple 地图定位骗到世界任何角落。
 
-## 原理
+## 怎么回事
 
-iPhone 扫描周边 WiFi 热点 + 蜂窝基站 → 发送到 `gs-loc.apple.com/clls/wloc` → Apple 返回这些热点/基站的 GPS 坐标 → iOS 三角定位。
+iPhone 看 Wi-Fi 信号和基站信号，拿着 BSSID 列表去问 Apple 这些设备在什么位置。Apple 回一份坐标清单，iOS 根据这些坐标算出自己在哪里。
 
-本模块拦截 Apple 的定位响应，将坐标全部改写为你指定的位置。iPhone 收到伪造数据后认为设备就在目标坐标。
+这套配置做的事情很简单：**在 Apple 发回坐标的路上拦截下来，全部改成你想要的数字**。iPhone 拿到改造过的坐标，算出来就是你指定的地方。
 
-> 所有处理在本地完成，不连接任何第三方服务器。
+不需要越狱，不需要额外装证书签发工具，代理软件自带 MITM 就够了。
 
----
+## 支持哪些软件
 
-## 各平台一键导入
-
-| 平台 | 价格 | 导入链接 |
+| 软件 | 文件 | 导入方法 |
 |------|------|---------|
-| **Shadowrocket** (小火箭) | $2.99 | [ios-location-spoofer.sgmodule](https://raw.githubusercontent.com/mekos2772/ios-location-spoofer/main/Shadowrocket/ios-location-spoofer.sgmodule) |
-| **Surge** | $49.99 | [ios-location-spoofer.sgmodule](https://raw.githubusercontent.com/mekos2772/ios-location-spoofer/main/Shadowrocket/ios-location-spoofer.sgmodule) |
-| **Loon** | $4.99 | [ios-location-spoofer.lnplugin](https://raw.githubusercontent.com/mekos2772/ios-location-spoofer/main/Shadowrocket/ios-location-spoofer.lnplugin) |
-| **Quantumult X** | $7.99 | [ios-location-spoofer.snippet](https://raw.githubusercontent.com/mekos2772/ios-location-spoofer/main/Shadowrocket/ios-location-spoofer.snippet) |
-| **Stash** | $3.99 | [ios-location-spoofer.stoverride](https://raw.githubusercontent.com/mekos2772/ios-location-spoofer/main/Shadowrocket/ios-location-spoofer.stoverride) |
+| Shadowrocket（小火箭） | `.sgmodule` | 配置 → 模块 → 右上角 + |
+| Surge | `.sgmodule` | 首页 → 模块 → 安装新模块 |
+| Loon | `.lnplugin` | 设置 → 插件 → 添加插件 |
+| Quantumult X | `.snippet` | 设置 → 重写 → 添加 |
+| Stash | `.stoverride` | 覆写 → 安装覆写 |
 
----
+## 怎么用
 
-## 使用步骤
+**第一步 — 开 HTTPS 解密**
 
-### ① 启用 HTTPS 解密并信任证书
+软件里找到 MITM / HTTPS 解密开关，打开。
 
-1. 在代理 App 中开启 HTTPS 解密 / MITM 功能
-2. 生成 CA 证书 → 设置 → 通用 → VPN 与设备管理 → 安装
-3. 设置 → 通用 → 关于本机 → 证书信任设置 → 启用对应 CA
+**第二步 — 装证书**
 
-### ② 导入模块
+软件会生成一个 CA 证书。下载下来，去系统设置里：
+1. 通用 → VPN 与设备管理 → 安装描述文件
+2. 通用 → 关于本机 → 证书信任设置 → 打开这个证书的开关
 
-- **Shadowrocket**：配置 → 模块 → 右上角 + → 输入导入链接
-- **Surge**：首页 → 模块 → 安装新模块 → 输入导入链接
-- **Loon**：设置 → 插件 → 添加插件 → 输入导入链接
-- **Quantumult X**：设置 → 重写 → 添加 → 输入导入链接
-- **Stash**：覆写 → 安装覆写 → 输入导入链接
+这两步不做，HTTPS 流量解不开。
 
-### ③ 启用验证
+**第三步 — 导入配置**
 
-1. 确保模块已勾选
-2. 断开重连 VPN
-3. 设置 → 隐私 → 定位服务 → 关闭 → 等 5 秒 → 重新开启
-4. 打开 Apple Maps 或天气 App 验证
+点上面的导入链接，文件进去后记得勾上启用。
 
----
+**第四步 — 验证**
 
-## 自定义坐标
+断开重连 VPN。去设置里把定位服务关了再开。打开地图 App 看位置变了没——变了就对了。
 
-在模块脚本参数中直接修改：
+## 改坐标
+
+默认是 Apple Park。想换地方，在模块参数里改：
 
 ```
-argument=mode=response&latitude=你的纬度&longitude=你的经度...
+latitude=39.9042&longitude=116.4074
 ```
 
-### 坐标参考
+上面是北京的。
 
-| 地点 | 纬度 | 经度 |
-|------|------|------|
-| 北京天安门 | 39.9042 | 116.4074 |
-| 上海外滩 | 31.2304 | 121.4737 |
-| 深圳南山 | 22.5431 | 113.9295 |
-| 台北 101 | 25.0330 | 121.5654 |
-| 东京新宿 | 35.6895 | 139.6917 |
-| 纽约时代广场 | 40.7580 | -73.9855 |
-| Apple Park | 37.3349 | -122.0090 |
+参数说明：
 
----
+| 名字 | 默认值 | 干什么的 |
+|------|--------|---------|
+| `latitude` | 37.3349 | 目标纬度 |
+| `longitude` | -122.00902 | 目标经度 |
+| `horizontalAccuracy` | 39 | 定位精准度，越小看起来越准 |
+| `verticalAccuracy` | 1000 | 垂直精度 |
+| `altitude` | 530 | 海拔 |
+| `failOpen` | true | 脚本出错就放行原始数据，不影响正常用 |
+| `debug` | false | 打开后会打日志，没事别开 |
 
-## 配置参数
+## 哪些域名会被拦截
 
-| 参数 | 默认值 | 说明 |
-|------|--------|------|
-| `enabled` | `true` | 启用开关 |
-| `latitude` | `37.3349` | 目标纬度 (-90~90) |
-| `longitude` | `-122.00902` | 目标经度 (-180~180) |
-| `horizontalAccuracy` | `39` | 水平精度/米 |
-| `verticalAccuracy` | `1000` | 垂直精度/米 |
-| `altitude` | `530` | 海拔/米 |
-| `motionActivityType` | `63` | 运动类型 |
-| `motionActivityConfidence` | `467` | 运动置信度 |
-| `failOpen` | `true` | 出错时放行原响应 |
-| `debug` | `false` | 调试日志 |
+- `gs-loc.apple.com` — Apple 全球定位
+- `gs-loc-cn.apple.com` — Apple 中国定位
+- `bluedot.is.autonavi.com` — 高德地图用的定位接口
+- `bluedot.is.autonavi.com.gds.alibabadns.com` — 高德在阿里 DNS 上的 CDN
 
----
+## 什么情况下不灵
 
-## 支持的域名
+- 纯 GPS 定位不受影响（开阔室外 GPS 直接连卫星，不走 Apple 服务器）
+- App 自己接的高德百度 SDK 也不走这个接口
+- 证书没信任一定不灵
+- 室内或城市里效果最好，因为这时候 iOS 主要靠 Wi-Fi 定位
 
-- `gs-loc.apple.com` — Apple 全球定位服务
-- `gs-loc-cn.apple.com` — Apple 中国大陆定位服务
-- `bluedot.is.autonavi.com` — 高德地图定位 CDN
-- `bluedot.is.autonavi.com.gds.alibabadns.com` — 阿里 DNS 高德 CDN
-
----
-
-## 文件说明
+## 文件清单
 
 ```
 Shadowrocket/
-├── ios-location-spoofer.sgmodule     ← Shadowrocket / Surge
-├── ios-location-spoofer.lnplugin     ← Loon
-├── ios-location-spoofer.snippet      ← Quantumult X
-├── ios-location-spoofer.stoverride   ← Stash
-├── location-spoofer.js               ← 核心 JS（4 平台共用）
-├── location-spoofer-qx.js            ← QX 专用 JS
-└── location-spoofer-config.json      ← 坐标配置
+├── ios-location-spoofer.sgmodule    # Surge、小火箭
+├── ios-location-spoofer.lnplugin    # Loon
+├── ios-location-spoofer.snippet     # Quantumult X
+├── ios-location-spoofer.stoverride  # Stash
+├── location-spoofer.js              # 核心脚本（四个软件共用）
+├── location-spoofer-qx.js           # QX 专用（base64 编解码差异）
+└── location-spoofer-config.json     # 坐标配置样板
 ```
-
----
-
-## 局限
-
-- 仅影响 Apple 系统定位（WiFi/蜂窝三角定位），不影响硬件 GPS
-- 室内/城市环境效果最佳
-- 不影响 App 自带第三方定位 SDK
-- 需完整 MITM 证书信任链

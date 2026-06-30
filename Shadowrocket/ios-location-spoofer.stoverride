@@ -1,5 +1,5 @@
 #!name=iOS Location Spoofer
-#!desc=通过 MITM HTTPS 解密拦截 Apple WiFi/蜂窝定位响应并修改坐标。Stash 覆写版。
+#!desc=劫持 Apple 定位封包，把坐标换成你想要的。Stash 覆写版。
 #!homepage=https://github.com/mekos2772/ios-location-spoofer
 
 scripts:
